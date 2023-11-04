@@ -40,10 +40,6 @@ jobs:
           go install github.com/kisielk/errcheck@latest
           go install honnef.co/go/tools/cmd/staticcheck@latest
 
-          cd frontend
-          pnpm install
-          pnpm add -g eslint
-
       # Run pre-commit --all-files
       - uses: pre-commit/action@646c83fcd040023954eafda54b4db0192ce70507 # v3.0.0
 
