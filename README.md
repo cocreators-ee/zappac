@@ -11,6 +11,8 @@ $bar = ($foo - 1) ** 16
 
 More documentation probably coming at some point.
 
+![Demo](./zappac.gif)
+
 ## Running
 
 ```shell
