@@ -53,7 +53,7 @@ func (m *model) exec() {
 	if err != nil {
 		m.err = err
 	} else {
-		result, err := m.zs.Exec(nodes)
+		result, err := m.zs.Exec(nodes, true)
 		if err != nil {
 			m.err = err
 		} else {
