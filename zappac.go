@@ -226,7 +226,6 @@ func (m model) View() string {
 	v := "> " + formatInput(m.input, m.parsedNodes) + "\n"
 
 	if m.err != nil {
-		v += "\n"
 		v += bad(m.err.Error()) + "\n"
 	}
 
