@@ -48,6 +48,7 @@ type model struct {
 	cursor            int
 	placeholderResult string
 	parsedNodes       []zappaclang.Node
+	formatNumbers     bool
 }
 
 func main() {
@@ -67,12 +68,13 @@ func main() {
 
 func initialModel() model {
 	return model{
-		zs:          zappaclang.NewZappacState(""),
-		input:       "",
-		result:      "",
-		cursor:      -1,
-		history:     []historyItem{},
-		parsedNodes: []zappaclang.Node{},
+		zs:            zappaclang.NewZappacState(""),
+		input:         "",
+		result:        "",
+		cursor:        -1,
+		history:       []historyItem{},
+		parsedNodes:   []zappaclang.Node{},
+		formatNumbers: true,
 	}
 }
 
@@ -123,6 +125,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "esc":
 			return m, tea.Quit
+		case "ctrl+f":
+			m.formatNumbers = !m.formatNumbers
+			return m, nil
 		case "enter":
 			m.exec(false)
 		case "up":
@@ -163,7 +168,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func formatInput(input string, parsedNodes []zappaclang.Node) string {
+func (m model) numberFormat(value string) string {
+	if !m.formatNumbers {
+		return value
+	}
+
+	val, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return value
+	}
+
+	// TODO: This seems to round off decimals rather heavily
+	return printer.Sprintf("%v", number.Decimal(val))
+}
+
+func (m model) formatInput(input string, parsedNodes []zappaclang.Node) string {
 	result := ""
 	lastPos := zappaclang.Pos(0)
 
@@ -189,7 +208,7 @@ func formatInput(input string, parsedNodes []zappaclang.Node) string {
 
 		val := input[start:end]
 		if typ == zappaclang.NodeNumber {
-			val = numberFormat(val)
+			val = m.numberFormat(val)
 		}
 		if zappaclang.IsNodeType(node, zappaclang.ValueNodes) {
 			val = value(val)
@@ -212,29 +231,19 @@ func formatInput(input string, parsedNodes []zappaclang.Node) string {
 	return result
 }
 
-func numberFormat(value string) string {
-	val, err := strconv.ParseFloat(value, 64)
-	if err != nil {
-		return value
-	}
-
-	// TODO: This seems to round off decimals rather heavily
-	return printer.Sprintf("%v", number.Decimal(val))
-}
-
 func (m model) View() string {
-	v := "> " + formatInput(m.input, m.parsedNodes) + "\n"
+	v := "> " + m.formatInput(m.input, m.parsedNodes) + "\n"
 
 	if m.err != nil {
 		v += bad(m.err.Error()) + "\n"
 	}
 
 	if m.placeholderResult != "" {
-		v += placeholder(numberFormat(m.placeholderResult)) + "\n"
+		v += placeholder(m.numberFormat(m.placeholderResult)) + "\n"
 	}
 
 	if m.result != "" {
-		v += value(numberFormat(m.result)) + "\n"
+		v += value(m.numberFormat(m.result)) + "\n"
 	}
 
 	if len(m.zs.Variables) > 0 {
@@ -249,7 +258,7 @@ func (m model) View() string {
 
 		for _, key := range keys {
 			num := m.zs.Variables[key].String()
-			v += fmt.Sprintf("%s %s %s\n", variable(key), op("="), value(numberFormat(num)))
+			v += fmt.Sprintf("%s %s %s\n", variable(key), op("="), value(m.numberFormat(num)))
 		}
 	}
 
@@ -262,7 +271,7 @@ func (m model) View() string {
 			if strings.Contains(item.input, "=") {
 				line = placeholder(item.input)
 			} else {
-				line = fmt.Sprintf("%s %s %s", placeholder(item.input), op("="), value(numberFormat(item.result)))
+				line = fmt.Sprintf("%s %s %s", placeholder(item.input), op("="), value(m.numberFormat(item.result)))
 			}
 
 			if i == m.cursor {

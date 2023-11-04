@@ -13,6 +13,8 @@ More documentation probably coming at some point.
 
 ![Demo](./zappac.gif)
 
+Press `ctrl+f` to toggle number formatting.
+
 ## Running
 
 ```shell
