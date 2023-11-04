@@ -21,3 +21,11 @@ go run zappac.go
 go build -o zappac
 ./zappac
 ```
+
+If you want to set up your development version in your system, run
+
+```shell
+go install
+```
+
+Ensure `$GOPATH/bin` is in your `$PATH`.
