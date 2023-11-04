@@ -35,9 +35,6 @@ jobs:
 
       - name: Install tools
         run: |
-          mkdir -p frontend/dist
-          touch frontend/dist/blah.txt
-
           pip install pre-commit
           go install github.com/lietu/go-pre-commit@latest
           go install github.com/kisielk/errcheck@latest
