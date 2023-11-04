@@ -4,8 +4,10 @@ go 1.18
 
 require (
 	github.com/charmbracelet/bubbletea v0.24.2
-	github.com/cocreators-ee/zappaclang v0.0.0-20231104141213-c61759c108fd
+	github.com/cocreators-ee/zappaclang v0.0.0-20231104202729-1f528fb189d7
+	github.com/jeandeaual/go-locale v0.0.0-20220711133428-7de61946b173
 	github.com/muesli/termenv v0.15.2
+	golang.org/x/text v0.14.0
 )
 
 require (
@@ -22,5 +24,5 @@ require (
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
