@@ -191,6 +191,10 @@ func (m model) formatInput(input string, parsedNodes []zappaclang.Node) string {
 		if typ == zappaclang.NodeEOF {
 			break
 		}
+		if typ == zappaclang.NodeParsingStopped {
+			lastPos = node.Position()
+			break
+		}
 
 		start := node.Position()
 		end := start
